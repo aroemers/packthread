@@ -103,12 +103,15 @@
 
       (match-form form [condp f v & clauses] (= condp 'condp)
         (let [value-symbol (gensym)
-              threaded-clauses (->> clauses
-                                    (partition 2)
-                                    (map (fn [[test branch]]
-                                           [test
-                                            (thread thread-list value-symbol branch)]))
-                                    (apply concat))]
+              threaded-clauses (loop [clauses clauses
+                                      threaded []]
+                                 (let [[a b c & rest] clauses]
+                                   (cond
+                                    (= b :>>) (recur rest (conj threaded a :>> c))
+                                    b (recur (cons c rest)
+                                             (conj threaded a (thread thread-list value-symbol b)))
+                                    a (conj threaded (thread thread-list value-symbol a))
+                                    :else threaded)))]
           `(let [~value-symbol ~value]
              (condp ~f ~v ~@threaded-clauses))))
 

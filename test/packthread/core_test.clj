@@ -28,7 +28,9 @@
     (+> 42 (cond false (+ 1))) => 42)
   (facts "about `condp` inside `+>"
     (+> 42 (condp = true true (+ 1))) => 43
-    (+> 43 (condp = true false (+ 1) true (- 1))) => 42)
+    (+> 43 (condp = true false (+ 1) true (- 1))) => 42
+    (+> 43 (condp = true (- 1))) => 42
+    (+> 43 (condp = true (- 1))) => 42)
   (facts "about `case` inside `+>"
     (+> 42 (case true true (+ 1))) => 43
     (+> 43 (case true false (+ 1) true (- 1))) => 42

@@ -22,7 +22,7 @@ creating different _projections_ of the state to manipulate with different funct
 
 Threads value through forms in much the same way as `->`, except for special
 handling of the following forms:
-  
+
 ####  if, if-not, if-let, when, when-not, when-let:
 
 The value is threaded through the then and else clauses independently,
@@ -36,7 +36,7 @@ For example,
 (+> 42 (if true inc)) ;=> 43
 (+> 42 (if false inc)) ;=> 42
 ```
-      
+
 In `when`, `when-not`, and `when-let` forms, the value is threaded through each
 form in the body, not just the last.
 
@@ -61,8 +61,43 @@ For example,
     dec)) ;=> 41
 ```
 
+#### condp
+
+The same as with `cond`, except that the expressions are not threaded when
+the `:>>` modifier is used for a clause. For example:
+
+```clojure
+(+> 42
+  (condp = :foo
+    :foo (+ 1))) ;=> 43
+
+(+> 42
+  (condp = :foo
+    :foo :>> (fn [x] x))) ;=> :foo
+
+(+> 42
+  (condp = :foo
+    (+ 1))) ;=> 43
+```
+
+### case
+
+The same as with `cond`. For example:
+
+```clojure
+(+> 42
+  (case :foo
+    :foo inc
+    :bar dec)) ;=> 43
+
+(+> 42
+  (case :baz
+    :foo inc
+    dec)) ;=> 41
+```
+
 #### do
-    
+
 The current expr is threaded through the body forms of the do.
 
 #### in
@@ -128,7 +163,7 @@ See [core_test.clj](test/packthread/core_test.clj) for examples of usage.
 
 Copyright 2014 Maitria
 
-You have permission to use this in any way you like (modify it, sell it, republish it), 
+You have permission to use this in any way you like (modify it, sell it, republish it),
 provided you agree to all the following conditions:
 
 * you don't mislead anyone about it
